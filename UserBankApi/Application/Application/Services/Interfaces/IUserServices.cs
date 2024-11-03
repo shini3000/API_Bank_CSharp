@@ -1,7 +1,7 @@
 ﻿using UserBankApi.Models.Dto;
 using UserBankApi.Models.Entities;
 
-namespace UserBankApi.Interfaces.Services
+namespace Application.Services.Interfaces
 {
     /// <summary>
     /// Interface that defines the services for user management.
