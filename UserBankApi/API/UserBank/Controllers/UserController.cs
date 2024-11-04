@@ -17,19 +17,11 @@ namespace UserBankApi.Controllers
 
         [HttpPost]
         [Route("create")]
-        public async Task<IActionResult> CreateUser()
+        public async Task<IActionResult> CreateUser([FromBody]UserDto user)
         {
-            //dto de prueba
-            UserDto user = new UserDto
-            {
-                Name = "Miguel",
-                Email = "Barrios@gmail.com",
-                Password = "123456"
-            };
             var createdUser = await _service.save(user);
             return Ok(createdUser);
 
         }
-
     }
 }
