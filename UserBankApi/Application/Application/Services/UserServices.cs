@@ -3,6 +3,7 @@ using UserBankApi.Models.Entities;
 using Application.Services.Interfaces;
 using AutoMapper;
 using Infrastructure.Repository;
+using Application.Dto;
 
 namespace UserBankApi.Services
 {
@@ -22,9 +23,9 @@ namespace UserBankApi.Services
             throw new NotImplementedException();
         }
 
-        public Task<UserEntity> FindById(int id)
+        public async Task<UserEntity> FindByEmail(string email)
         {
-            throw new NotImplementedException();
+            return await _repository.FindByEmail(email);
         }
 
         public async Task<UserEntity> save(UserDto userDto)
@@ -35,6 +36,23 @@ namespace UserBankApi.Services
         }
 
         public Task<UserEntity> update(UserDto userDto)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<bool> VerifyPassword(string email, string inputPassword)
+        {
+            var userEntity = await _repository.FindByEmail(email);
+
+            if (userEntity == null)
+            {
+                return false;
+            }
+
+            return BCrypt.Net.BCrypt.Verify(inputPassword, userEntity.Password);
+        }
+
+        public Task<UserEntity> FindById(int id)
         {
             throw new NotImplementedException();
         }

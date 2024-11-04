@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Application.Dto;
+using Microsoft.AspNetCore.Mvc;
 using UserBankApi.Models.Dto;
 using UserBankApi.Services;
 
@@ -22,6 +23,14 @@ namespace UserBankApi.Controllers
             var createdUser = await _service.save(user);
             return Ok(createdUser);
 
+        }
+
+        [HttpPost]
+        [Route("Login")]
+        public async Task<IActionResult> Login([FromBody]LoginDto loginDto)
+        {
+            if (await _service.VerifyPassword(loginDto.Email, loginDto.Password)) { return Ok("login success"); }
+            return BadRequest();
         }
     }
 }
