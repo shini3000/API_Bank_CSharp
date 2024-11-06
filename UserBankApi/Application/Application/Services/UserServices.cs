@@ -4,6 +4,7 @@ using Application.Services.Interfaces;
 using AutoMapper;
 using Infrastructure.Repository;
 using Application.Dto;
+using Application.Validations;
 
 namespace UserBankApi.Services
 {
@@ -11,11 +12,14 @@ namespace UserBankApi.Services
     {
         private readonly IMapper _mapper;
         private readonly UserRepository _repository;
+        private readonly UserDataValidation _userDataValidation;
 
-        public UserServices(IMapper mapper, UserRepository repository)
+        public UserServices(IMapper mapper, UserRepository repository,
+            UserDataValidation userDataValidation)
         {
             _mapper = mapper;
             _repository = repository;
+            _userDataValidation = userDataValidation;
         }
 
         public Task<UserEntity> delete(int id)
@@ -30,6 +34,7 @@ namespace UserBankApi.Services
 
         public async Task<UserEntity> save(UserDto userDto)
         {
+            _userDataValidation.Validate(userDto);
             var userEntity = _mapper.Map<UserEntity>(userDto);
             await _repository.SaveAsync(userEntity);
             return userEntity;

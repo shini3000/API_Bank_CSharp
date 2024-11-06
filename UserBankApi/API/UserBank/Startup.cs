@@ -1,4 +1,5 @@
 ﻿using Application.Mapper;
+using Application.Validations;
 using Infrastructure.Repository;
 using Microsoft.EntityFrameworkCore;
 using UserBankApi.Data;
@@ -23,6 +24,7 @@ namespace UserBankApi
 
             services.AddScoped<UserServices>();
             services.AddScoped<UserRepository>();
+            services.AddScoped<UserDataValidation>();
 
             var connectionString = Configuration.GetConnectionString("ConnectionServer");
             services.AddDbContext<ApplicationDbContext>(options =>
