@@ -1,5 +1,8 @@
-﻿using Application.Mapper;
+﻿using Application;
+using Application.Mapper;
 using Application.Validations;
+using Domain;
+using Infrastructure;
 using Infrastructure.Repository;
 using Microsoft.EntityFrameworkCore;
 using UserBankApi.Data;
@@ -26,6 +29,9 @@ namespace UserBankApi
             services.AddScoped<UserRepository>();
             services.AddScoped<UserDataCreateValidation>();
             services.AddScoped<UserDataLoginValidations>();
+            services.AddApplicationInjection();
+            services.AddInfrastructureInjection();
+            services.AddDomainInjection();
 
             var connectionString = Configuration.GetConnectionString("ConnectionServer");
             services.AddDbContext<ApplicationDbContext>(options =>

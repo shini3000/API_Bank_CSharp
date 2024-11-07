@@ -8,7 +8,6 @@ namespace UserBankApi.Controllers
     [Route("User/[controller]")]
     public class UserController : Controller
     {
-
         private readonly UserServices _service;
 
         public UserController(UserServices service)
