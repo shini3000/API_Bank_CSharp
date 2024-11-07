@@ -29,8 +29,8 @@ namespace UserBankApi.Controllers
         [Route("Login")]
         public async Task<IActionResult> Login([FromBody]LoginDto loginDto)
         {
-            if (await _service.VerifyPassword(loginDto.Email, loginDto.Password)) { return Ok("login success"); }
-            return BadRequest();
+            if (await _service.VerifyPassword(loginDto)) { return Ok("login success"); }
+            return BadRequest("Email o contraseña incorrecta");
         }
     }
 }

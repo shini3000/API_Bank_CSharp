@@ -24,7 +24,8 @@ namespace UserBankApi
 
             services.AddScoped<UserServices>();
             services.AddScoped<UserRepository>();
-            services.AddScoped<UserDataValidation>();
+            services.AddScoped<UserDataCreateValidation>();
+            services.AddScoped<UserDataLoginValidations>();
 
             var connectionString = Configuration.GetConnectionString("ConnectionServer");
             services.AddDbContext<ApplicationDbContext>(options =>

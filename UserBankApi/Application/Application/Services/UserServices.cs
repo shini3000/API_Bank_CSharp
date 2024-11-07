@@ -12,14 +12,16 @@ namespace UserBankApi.Services
     {
         private readonly IMapper _mapper;
         private readonly UserRepository _repository;
-        private readonly UserDataValidation _userDataValidation;
+        private readonly UserDataCreateValidation _userDataValidation;
+        private readonly UserDataLoginValidations _userDataLoginValidation;
 
         public UserServices(IMapper mapper, UserRepository repository,
-            UserDataValidation userDataValidation)
+            UserDataCreateValidation userDataValidation, UserDataLoginValidations userDataLoginValidation)
         {
             _mapper = mapper;
             _repository = repository;
             _userDataValidation = userDataValidation;
+            _userDataLoginValidation = userDataLoginValidation;
         }
 
         public Task<UserEntity> delete(int id)
@@ -34,9 +36,10 @@ namespace UserBankApi.Services
 
         public async Task<UserEntity> save(UserDto userDto)
         {
-            _userDataValidation.Validate(userDto);
+            _userDataValidation.Validate(userDto, _repository);
             var userEntity = _mapper.Map<UserEntity>(userDto);
             await _repository.SaveAsync(userEntity);
+            userEntity.Password = null;
             return userEntity;
         }
 
@@ -45,16 +48,17 @@ namespace UserBankApi.Services
             throw new NotImplementedException();
         }
 
-        public async Task<bool> VerifyPassword(string email, string inputPassword)
+        public async Task<bool> VerifyPassword(LoginDto loginDto)
         {
-            var userEntity = await _repository.FindByEmail(email);
+            _userDataLoginValidation.Validate(loginDto);
+            var userEntity = await _repository.FindByEmail(loginDto.Email);
 
             if (userEntity == null)
             {
                 return false;
             }
 
-            return BCrypt.Net.BCrypt.Verify(inputPassword, userEntity.Password);
+            return BCrypt.Net.BCrypt.Verify(loginDto.Password, userEntity.Password);
         }
 
         public Task<UserEntity> FindById(int id)
