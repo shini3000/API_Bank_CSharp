@@ -1,12 +1,9 @@
 ﻿using Application;
 using Application.Mapper;
-using Application.Validations;
 using Domain;
 using Infrastructure;
-using Infrastructure.Repository;
 using Microsoft.EntityFrameworkCore;
 using UserBankApi.Data;
-using UserBankApi.Services;
 
 namespace UserBankApi
 {
@@ -24,24 +21,16 @@ namespace UserBankApi
             services.AddControllers();
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
-
-            services.AddScoped<UserServices>();
-            services.AddScoped<UserRepository>();
-            services.AddScoped<UserDataCreateValidation>();
-            services.AddScoped<UserDataLoginValidations>();
+            var connectionString = Configuration.GetConnectionString("ConnectionServer");
+            services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
             services.AddApplicationInjection();
             services.AddInfrastructureInjection();
             services.AddDomainInjection();
-
-            var connectionString = Configuration.GetConnectionString("ConnectionServer");
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseMySql(connectionString,
-                    ServerVersion.AutoDetect(connectionString)));
-
             services.AddAutoMapper(typeof(MainMapper));
         }
 
-        public void Configure(WebApplication app) 
+        public void Configure(WebApplication app)
         {
             if (app.Environment.IsDevelopment())
             {

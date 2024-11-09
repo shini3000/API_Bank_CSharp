@@ -1,16 +1,16 @@
 ﻿using Application.Dto;
+using Application.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using UserBankApi.Models.Dto;
-using UserBankApi.Services;
 
 namespace UserBankApi.Controllers
 {
     [Route("User/[controller]")]
     public class UserController : Controller
     {
-        private readonly UserServices _service;
+        private readonly IUserServices _service;
 
-        public UserController(UserServices service)
+        public UserController(IUserServices service)
         {
             _service = service;
         }
@@ -21,7 +21,6 @@ namespace UserBankApi.Controllers
         {
             var createdUser = await _service.save(user);
             return Ok(createdUser);
-
         }
 
         [HttpPost]

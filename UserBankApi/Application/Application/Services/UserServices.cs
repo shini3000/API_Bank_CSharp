@@ -2,26 +2,29 @@
 using UserBankApi.Models.Entities;
 using Application.Services.Interfaces;
 using AutoMapper;
-using Infrastructure.Repository;
+using Infrastructure.Repository.Interfaces;
 using Application.Dto;
-using Application.Validations;
+using Application.Validations.Interfaces;
 
 namespace UserBankApi.Services
 {
     public class UserServices : IUserServices
     {
+        private readonly IUserRepository<UserEntity> _userRepository;
+        private readonly IValidationsServices<UserDto, IUserRepository<UserEntity>> _userDataValidation;
+        private readonly IValidationsServices<LoginDto, object> _userDataLoginValidation;
         private readonly IMapper _mapper;
-        private readonly UserRepository _repository;
-        private readonly UserDataCreateValidation _userDataValidation;
-        private readonly UserDataLoginValidations _userDataLoginValidation;
 
-        public UserServices(IMapper mapper, UserRepository repository,
-            UserDataCreateValidation userDataValidation, UserDataLoginValidations userDataLoginValidation)
+        public UserServices(
+            IUserRepository<UserEntity> userRepository,
+            IValidationsServices<UserDto, IUserRepository<UserEntity>> userDataValidation,
+            IValidationsServices<LoginDto, object> userDataLoginValidation,
+            IMapper mapper)
         {
-            _mapper = mapper;
-            _repository = repository;
+            _userRepository = userRepository;
             _userDataValidation = userDataValidation;
             _userDataLoginValidation = userDataLoginValidation;
+            _mapper = mapper;
         }
 
         public Task<UserEntity> delete(int id)
@@ -31,16 +34,16 @@ namespace UserBankApi.Services
 
         public async Task<UserEntity> FindByEmail(string email)
         {
-            return await _repository.FindByEmail(email);
+            return await _userRepository.FindByEmail(email);
         }
 
-        public async Task<UserEntity> save(UserDto userDto)
+       public async Task<UserEntity> save(UserDto userDto)
         {
-            _userDataValidation.Validate(userDto, _repository);
-            var userEntity = _mapper.Map<UserEntity>(userDto);
-            await _repository.SaveAsync(userEntity);
-            userEntity.Password = null;
-            return userEntity;
+        _userDataValidation.Validate(userDto, _userRepository);
+        var userEntity = _mapper.Map<UserEntity>(userDto);
+        await _userRepository.SaveAsync(userEntity);
+        userEntity.Password = null;
+        return userEntity;
         }
 
         public Task<UserEntity> update(UserDto userDto)
@@ -50,14 +53,13 @@ namespace UserBankApi.Services
 
         public async Task<bool> VerifyPassword(LoginDto loginDto)
         {
-            _userDataLoginValidation.Validate(loginDto);
-            var userEntity = await _repository.FindByEmail(loginDto.Email);
-
+            object obj = new object();
+            _userDataLoginValidation.Validate(loginDto, obj);
+            var userEntity = await _userRepository.FindByEmail(loginDto.Email);
             if (userEntity == null)
             {
                 return false;
             }
-
             return BCrypt.Net.BCrypt.Verify(loginDto.Password, userEntity.Password);
         }
 

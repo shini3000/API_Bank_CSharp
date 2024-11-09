@@ -1,13 +1,13 @@
-﻿
-using Application.Dto;
+﻿using Application.Dto;
 using Application.Exceptions;
+using Application.Validations.Interfaces;
 using System.Text.RegularExpressions;
 
 namespace Application.Validations
 {
-    public class UserDataLoginValidations
+    public class UserDataLoginValidations<T> : IValidationsServices<LoginDto,T>
     {
-        public void Validate(LoginDto loginDto)
+        public void Validate(LoginDto loginDto,T value)
         {
             UserEmailValidate(loginDto.Email);
             UserPasswordValidate(loginDto.Password);

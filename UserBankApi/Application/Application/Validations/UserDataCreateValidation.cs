@@ -1,23 +1,28 @@
 ﻿using Application.Exceptions;
-using Infrastructure.Repository;
+using Application.Validations.Interfaces;
+using Infrastructure.Repository.Interfaces;
 using System.Text.RegularExpressions;
 using UserBankApi.Models.Dto;
+using UserBankApi.Models.Entities;
 
 namespace Application.Validations
 {
-    public class UserDataCreateValidation
+    public class UserDataCreateValidation : IValidationsServices<UserDto, IUserRepository<UserEntity>>
     {
-        public void Validate(UserDto userDto, UserRepository repository )
+        private  IUserRepository<UserEntity> _repository;
+
+        public void Validate(UserDto userDto, IUserRepository<UserEntity> repository )
         {
-            UserExists(userDto.Email, repository);
+            _repository = repository;
+            UserExists(userDto.Email);
             UserDataNotEmpty(userDto.Email, userDto.Password, userDto.Name);
             UserPasswordValidation(userDto.Password);
             UserEmailValidation(userDto.Email);
         }
 
-        private void UserExists(string email, UserRepository repository) 
+        private void UserExists(string email) 
         {
-            if (repository.FindByEmail(email) != null)
+            if (_repository.FindByEmail(email).Result != null)
             {
                 throw new UserInvalidException("Email vinculado a una cuenta existente");
             }
