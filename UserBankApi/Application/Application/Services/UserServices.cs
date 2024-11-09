@@ -3,8 +3,11 @@ using UserBankApi.Models.Entities;
 using Application.Services.Interfaces;
 using AutoMapper;
 using Infrastructure.Repository.Interfaces;
-using Application.Dto;
+using Domain.Interfaces.Dtos;
 using Application.Validations.Interfaces;
+using Domain.Interfaces;
+using Application.Dto;
+
 
 namespace UserBankApi.Services
 {
@@ -14,17 +17,20 @@ namespace UserBankApi.Services
         private readonly IValidationsServices<UserDto, IUserRepository<UserEntity>> _userDataValidation;
         private readonly IValidationsServices<LoginDto, object> _userDataLoginValidation;
         private readonly IMapper _mapper;
+        private readonly ITokenService _tokenService;
 
         public UserServices(
             IUserRepository<UserEntity> userRepository,
             IValidationsServices<UserDto, IUserRepository<UserEntity>> userDataValidation,
             IValidationsServices<LoginDto, object> userDataLoginValidation,
-            IMapper mapper)
+            IMapper mapper,
+            ITokenService tokenService)
         {
             _userRepository = userRepository;
             _userDataValidation = userDataValidation;
             _userDataLoginValidation = userDataLoginValidation;
             _mapper = mapper;
+            _tokenService = tokenService;
         }
 
         public Task<UserEntity> delete(int id)
@@ -51,16 +57,21 @@ namespace UserBankApi.Services
             throw new NotImplementedException();
         }
 
-        public async Task<bool> VerifyPassword(LoginDto loginDto)
+        public async Task<LoginResponse> VerifyPassword(LoginDto loginDto)
         {
-            object obj = new object();
-            _userDataLoginValidation.Validate(loginDto, obj);
+            _userDataLoginValidation.Validate(loginDto, new object());
             var userEntity = await _userRepository.FindByEmail(loginDto.Email);
-            if (userEntity == null)
+            if (userEntity == null || !BCrypt.Net.BCrypt.Verify(loginDto.Password, userEntity.Password))
             {
-                return false;
+                return null;
             }
-            return BCrypt.Net.BCrypt.Verify(loginDto.Password, userEntity.Password);
+
+            var token = _tokenService.GenerateToken(userEntity);
+
+            return new LoginResponse
+            {
+                Token = token
+            };
         }
 
         public Task<UserEntity> FindById(int id)

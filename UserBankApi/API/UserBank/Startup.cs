@@ -2,8 +2,14 @@
 using Application.Mapper;
 using Domain;
 using Infrastructure;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using UserBank.Authentication.Services;
+using UserBank.Authentication;
 using UserBankApi.Data;
+using Domain.Interfaces;
 
 namespace UserBankApi
 {
@@ -24,6 +30,26 @@ namespace UserBankApi
             var connectionString = Configuration.GetConnectionString("ConnectionServer");
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+            var jwtSection = Configuration.GetSection("JwtSettings");
+            services.Configure<JwtSettings>(jwtSection);
+            var jwtSettings = jwtSection.Get<JwtSettings>();
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = false,
+                        ValidateAudience = false,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(
+                            Encoding.UTF8.GetBytes(jwtSettings.SecretKey))
+                    };
+                });
+
+            // Registrar el servicio de token
+            services.AddTransient<ITokenService, TokenService>();
             services.AddApplicationInjection();
             services.AddInfrastructureInjection();
             services.AddDomainInjection();
@@ -39,6 +65,7 @@ namespace UserBankApi
             }
 
             app.UseHttpsRedirection();
+            app.UseAuthentication();
             app.UseAuthorization();
             app.MapControllers();
         }

@@ -1,4 +1,5 @@
 ﻿using Application.Dto;
+using Domain.Interfaces.Dtos;
 using UserBankApi.Models.Dto;
 using UserBankApi.Models.Entities;
 
@@ -21,7 +22,7 @@ namespace Application.Services.Interfaces
         /// </summary>
         /// <param name="loginDto">The login data containing the user's email and password.</param>
         /// <returns>A task that represents the asynchronous operation, containing a boolean indicating whether the password is valid.</returns>
-        Task<bool> VerifyPassword(LoginDto loginDto);
+        Task<LoginResponse> VerifyPassword(LoginDto loginDto);
 
         /// <summary>
         /// Updates an existing user.

@@ -1,11 +1,13 @@
 ﻿using Application.Dto;
 using Application.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using UserBankApi.Models.Dto;
 
 namespace UserBankApi.Controllers
 {
-    [Route("User/[controller]")]
+    [Route("[controller]")]
     public class UserController : Controller
     {
         private readonly IUserServices _service;
@@ -27,8 +29,23 @@ namespace UserBankApi.Controllers
         [Route("Login")]
         public async Task<IActionResult> Login([FromBody]LoginDto loginDto)
         {
-            if (await _service.VerifyPassword(loginDto)) { return Ok("login success"); }
-            return BadRequest("Email o contraseña incorrecta");
+            var response = await _service.VerifyPassword(loginDto);
+            if (response == null)
+            {
+                return BadRequest("Email o contraseña incorrecta");
+            }
+            return Ok(response);
+        }
+
+
+        [Authorize]
+        [HttpGet("protected")]
+        public IActionResult Protected()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
+
+            return Ok(new { message = "Ruta protegida", userId, userEmail });
         }
     }
 }
