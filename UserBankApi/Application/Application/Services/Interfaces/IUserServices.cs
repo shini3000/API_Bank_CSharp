@@ -1,4 +1,6 @@
-﻿using UserBankApi.Models.Dto;
+﻿using Application.Dto;
+using Domain.Interfaces.Dtos;
+using UserBankApi.Models.Dto;
 using UserBankApi.Models.Entities;
 
 namespace Application.Services.Interfaces
@@ -9,31 +11,45 @@ namespace Application.Services.Interfaces
     public interface IUserServices
     {
         /// <summary>
-        /// Saves a new user to the database.
+        /// Saves a new user or updates an existing one.
         /// </summary>
-        /// <param name="userDto">The object containing the user information to save.</param>
-        /// <returns>The saved user entity.</returns>
-        public Task<UserEntity> save(UserDto userDto);
+        /// <param name="userDto">The user data to be saved.</param>
+        /// <returns>A task that represents the asynchronous operation, containing the saved user entity.</returns>
+        Task<UserEntity> save(UserDto userDto);
 
         /// <summary>
-        /// Updates an existing user's information in the database.
+        /// Verifies the password of a user.
         /// </summary>
-        /// <param name="userDto">The object containing the updated user information.</param>
-        /// <returns>The updated user entity.</returns>
-        public Task<UserEntity> update(UserDto userDto);
+        /// <param name="loginDto">The login data containing the user's email and password.</param>
+        /// <returns>A task that represents the asynchronous operation, containing a boolean indicating whether the password is valid.</returns>
+        Task<LoginResponse> VerifyPassword(LoginDto loginDto);
 
         /// <summary>
-        /// Deletes a user from the database.
+        /// Updates an existing user.
         /// </summary>
-        /// <param name="id">The identifier of the user to delete.</param>
-        /// <returns>The deleted user entity.</returns>
-        public Task<UserEntity> delete(int id);
+        /// <param name="userDto">The updated user data.</param>
+        /// <returns>A task that represents the asynchronous operation, containing the updated user entity.</returns>
+        Task<UserEntity> update(UserDto userDto);
 
         /// <summary>
-        /// Finds a user by its identifier.
+        /// Deletes a user by its ID.
         /// </summary>
-        /// <param name="id">The identifier of the user to find.</param>
-        /// <returns>The found user entity.</returns>
-        public Task<UserEntity> FindById(int id);
+        /// <param name="id">The ID of the user to be deleted.</param>
+        /// <returns>A task that represents the asynchronous operation, containing the deleted user entity.</returns>
+        Task<UserEntity> delete(int id);
+
+        /// <summary>
+        /// Finds a user by its email address.
+        /// </summary>
+        /// <param name="email">The email address of the user to be found.</param>
+        /// <returns>A task that represents the asynchronous operation, containing the found user entity.</returns>
+        Task<UserEntity> FindByEmail(string email);
+
+        /// <summary>
+        /// Finds a user by its ID.
+        /// </summary>
+        /// <param name="id">The ID of the user to be found.</param>
+        /// <returns>A task that represents the asynchronous operation, containing the found user entity.</returns>
+        Task<UserEntity> FindById(int id);
     }
 }

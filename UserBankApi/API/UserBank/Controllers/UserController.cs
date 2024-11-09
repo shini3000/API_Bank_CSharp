@@ -1,35 +1,51 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Application.Dto;
+using Application.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using UserBankApi.Models.Dto;
-using UserBankApi.Services;
 
 namespace UserBankApi.Controllers
 {
-    [Route("User/[controller]")]
+    [Route("[controller]")]
     public class UserController : Controller
     {
+        private readonly IUserServices _service;
 
-        private readonly UserServices _service;
-
-        public UserController(UserServices service)
+        public UserController(IUserServices service)
         {
             _service = service;
         }
 
         [HttpPost]
         [Route("create")]
-        public async Task<IActionResult> CreateUser()
+        public async Task<IActionResult> CreateUser([FromBody]UserDto user)
         {
-            //dto de prueba
-            UserDto user = new UserDto
-            {
-                Name = "Miguel",
-                Email = "Barrios@gmail.com",
-                Password = "123456"
-            };
             var createdUser = await _service.save(user);
             return Ok(createdUser);
-
         }
 
+        [HttpPost]
+        [Route("Login")]
+        public async Task<IActionResult> Login([FromBody]LoginDto loginDto)
+        {
+            var response = await _service.VerifyPassword(loginDto);
+            if (response == null)
+            {
+                return BadRequest("Email o contraseña incorrecta");
+            }
+            return Ok(response);
+        }
+
+
+        [Authorize]
+        [HttpGet("protected")]
+        public IActionResult Protected()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
+
+            return Ok(new { message = "Ruta protegida", userId, userEmail });
+        }
     }
 }
