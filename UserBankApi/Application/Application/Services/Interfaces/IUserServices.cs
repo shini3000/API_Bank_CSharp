@@ -51,5 +51,7 @@ namespace Application.Services.Interfaces
         /// <param name="id">The ID of the user to be found.</param>
         /// <returns>A task that represents the asynchronous operation, containing the found user entity.</returns>
         Task<UserEntity> FindById(int id);
+
+        Task<UserEntity> GetBalance(string email, string emailToken);
     }
 }

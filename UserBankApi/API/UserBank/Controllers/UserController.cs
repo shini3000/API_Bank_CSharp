@@ -39,13 +39,12 @@ namespace UserBankApi.Controllers
 
 
         [Authorize]
-        [HttpGet("protected")]
-        public IActionResult Protected()
+        [HttpGet("GetBalance/{Email}")]
+        public IActionResult GetBalance([FromRoute]string email)
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
-
-            return Ok(new { message = "Ruta protegida", userId, userEmail });
+            var balance = _service.GetBalance(email, userEmail).Result;
+            return Ok(balance);
         }
     }
 }
