@@ -17,6 +17,7 @@ namespace Application
         {
             services.AddScoped<IValidationsServices<UserDto, IUserRepository<UserEntity>>, UserDataCreateValidation>();
             services.AddScoped<IValidationsServices<LoginDto, object>, UserDataLoginValidations<object>>();
+            services.AddScoped<IValidationsServices<string,string>, UserGetBalanceValidation>();
             services.AddScoped<IUserServices, UserServices>();
             services.AddAutoMapper(typeof(MainMapper));
         }

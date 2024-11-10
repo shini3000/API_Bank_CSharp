@@ -33,12 +33,16 @@ namespace Application.Middleware
             var response = context.Response;
             response.ContentType = "application/json";
 
+            if (ex is AggregateException aggregateException)
+            {
+                ex = aggregateException.InnerExceptions.FirstOrDefault() ?? ex;
+            }
+
             var exceptionMapping = new Dictionary<Type, (HttpStatusCode StatusCode, string Title)>
             {
                 { typeof(UserInvalidException), (HttpStatusCode.BadRequest, "User Validation Error") },
                 { typeof(NotFoundException), (HttpStatusCode.NotFound, "Resource Not Found") },
-                { typeof(UnauthorizedAccessException), (HttpStatusCode.Unauthorized, "Unauthorized Access") },
-                { typeof(ValidationException), (HttpStatusCode.UnprocessableEntity, "Validation Error") }
+                { typeof(UnauthorizedException), (HttpStatusCode.Unauthorized, "Unauthorized Access") }
             };
 
             ProblemDetails problemDetails;

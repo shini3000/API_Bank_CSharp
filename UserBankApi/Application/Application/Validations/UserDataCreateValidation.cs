@@ -9,20 +9,18 @@ namespace Application.Validations
 {
     public class UserDataCreateValidation : IValidationsServices<UserDto, IUserRepository<UserEntity>>
     {
-        private  IUserRepository<UserEntity> _repository;
 
         public void Validate(UserDto userDto, IUserRepository<UserEntity> repository )
         {
-            _repository = repository;
-            UserExists(userDto.Email);
+            UserExists(userDto.Email, repository);
             UserDataNotEmpty(userDto.Email, userDto.Password, userDto.Name);
             UserPasswordValidation(userDto.Password);
             UserEmailValidation(userDto.Email);
         }
 
-        private void UserExists(string email) 
+        private void UserExists(string email, IUserRepository<UserEntity> repository)
         {
-            if (_repository.FindByEmail(email).Result != null)
+            if (repository.FindByEmail(email).Result != null)
             {
                 throw new UserInvalidException("Email vinculado a una cuenta existente");
             }

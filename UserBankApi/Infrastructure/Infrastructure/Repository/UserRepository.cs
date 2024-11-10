@@ -28,9 +28,9 @@ namespace Infrastructure.Repository
 
         public async Task<UserEntity> FindByEmail(string email)
         {
-            #pragma warning disable CS8603 
-            return await _entities.FirstOrDefaultAsync(x => x.Email == email);
-            #pragma warning restore CS8603 
+            try { return await _entities.FirstOrDefaultAsync(x => x.Email == email); }
+            catch (Exception) { }
+            return null;
         }
 
         public Task<UserEntity> UpdateAsync(UserEntity user)

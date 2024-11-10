@@ -10,6 +10,7 @@ using UserBank.Authentication.Services;
 using UserBank.Authentication;
 using UserBankApi.Data;
 using Domain.Interfaces;
+using Application.Exceptions;
 
 namespace UserBankApi
 {
@@ -27,9 +28,11 @@ namespace UserBankApi
             services.AddControllers();
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
+
             var connectionString = Configuration.GetConnectionString("ConnectionServer");
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+
             var jwtSection = Configuration.GetSection("JwtSettings");
             services.Configure<JwtSettings>(jwtSection);
             var jwtSettings = jwtSection.Get<JwtSettings>();
@@ -46,9 +49,16 @@ namespace UserBankApi
                         IssuerSigningKey = new SymmetricSecurityKey(
                             Encoding.UTF8.GetBytes(jwtSettings.SecretKey))
                     };
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnChallenge = context =>
+                        {
+                            context.HandleResponse();
+                            throw new UnauthorizedException("El token ha expirado. Por favor, inicie sesión de nuevo.");
+                        }
+                    };
                 });
 
-            // Registrar el servicio de token
             services.AddTransient<ITokenService, TokenService>();
             services.AddApplicationInjection();
             services.AddInfrastructureInjection();
