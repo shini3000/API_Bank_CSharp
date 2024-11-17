@@ -3,6 +3,7 @@ using Application.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using UserBankApi.Models.Entities;
 
 namespace UserBank.Controllers
 {
@@ -26,11 +27,13 @@ namespace UserBank.Controllers
 
         [Authorize]
         [HttpGet]
-        [Route("balance/{id}")]
-        public async Task<IActionResult> GetBalance([FromRoute]Guid id) 
+        [Route("balance/{accountNumber}")]
+        public async Task<IActionResult> GetBalance([FromRoute]int accountNumber)
         {
-            var userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
-            return null;
+            AccountEntity balance;
+            string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            balance = await _service.GetAccountByAccountNumber(accountNumber, userId);
+            return Ok(balance);
         }
 
     }

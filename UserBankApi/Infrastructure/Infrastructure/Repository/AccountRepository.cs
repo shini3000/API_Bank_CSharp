@@ -24,9 +24,9 @@ namespace Infrastructure.Repository
             return account;
         }
 
-        public Task<AccountEntity> GetAccountByAccountNumber(int accountNumber)
+        public async Task<AccountEntity> GetAccountByAccountNumber(int accountNumber)
         {
-            throw new NotImplementedException();
+            return await _entities.FirstOrDefaultAsync(x => x.AccountNumber == accountNumber);
         }
 
         public Task<AccountEntity> UpdateAccount(AccountEntity account)

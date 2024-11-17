@@ -16,7 +16,6 @@ namespace UserBankApi.Services
         private readonly IUserRepository<UserEntity> _userRepository;
         private readonly IValidationsServices<UserDto, IUserRepository<UserEntity>> _userDataValidation;
         private readonly IValidationsServices<LoginDto, object> _userDataLoginValidation;
-        private readonly IValidationsServices<string, string> _userGetBalanceValidation;
         private readonly IMapper _mapper;
         private readonly ITokenService _tokenService;
 
@@ -24,14 +23,12 @@ namespace UserBankApi.Services
             IUserRepository<UserEntity> userRepository,
             IValidationsServices<UserDto, IUserRepository<UserEntity>> userDataValidation,
             IValidationsServices<LoginDto, object> userDataLoginValidation,
-            IValidationsServices<string, string> userGetBalanceValidation,
             IMapper mapper,
             ITokenService tokenService)
         {
             _userRepository = userRepository;
             _userDataValidation = userDataValidation;
             _userDataLoginValidation = userDataLoginValidation;
-            _userGetBalanceValidation = userGetBalanceValidation;
             _mapper = mapper;
             _tokenService = tokenService;
         }
@@ -82,12 +79,5 @@ namespace UserBankApi.Services
             throw new NotImplementedException();
         }
 
-        public async Task<UserEntity> GetBalance(string email,string emailToken)
-        {
-            _userGetBalanceValidation.Validate(email, emailToken);
-            UserEntity userEntity = await _userRepository.FindByEmail(email);
-            userEntity.Password = null;
-            return userEntity;  
-        }
     }
 }

@@ -7,5 +7,6 @@ namespace Application.Services.Interfaces
     {
         Task<AccountEntity> CreateAccount(Account account);
         Task<List<AccountEntity>> GetAccountsByUser(int userId);
+        Task<AccountEntity> GetAccountByAccountNumber(int accountNumber, string userId);
     }
 }
