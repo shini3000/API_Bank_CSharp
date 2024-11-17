@@ -1,5 +1,6 @@
 ﻿using Application.Dto;
 using Application.Mapper;
+using Application.Services;
 using Application.Services.Interfaces;
 using Application.Validations;
 using Application.Validations.Interfaces;
@@ -18,7 +19,8 @@ namespace Application
             services.AddScoped<IValidationsServices<UserDto, IUserRepository<UserEntity>>, UserDataCreateValidation>();
             services.AddScoped<IValidationsServices<LoginDto, object>, UserDataLoginValidations<object>>();
             services.AddScoped<IValidationsServices<string,string>, UserGetBalanceValidation>();
-            services.AddScoped<IUserServices, UserServices>();
+            services.AddScoped<IUserServices,UserServices>();
+            services.AddScoped<IAccountServices,AccountServices>();
             services.AddAutoMapper(typeof(MainMapper));
         }
     }

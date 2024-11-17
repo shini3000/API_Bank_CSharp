@@ -10,6 +10,7 @@ namespace Infrastructure
         public static void AddInfrastructureInjection(this IServiceCollection services)
         {
             services.AddScoped<IUserRepository<UserEntity>, UserRepository>();
+            services.AddScoped<IAccountRepository<AccountEntity>, AccountRepository>();
         }
     }
 }

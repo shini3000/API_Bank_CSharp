@@ -7,13 +7,12 @@ namespace UserBankApi.Models.Entities
     public class AccountEntity : BaseEntity
     {
         [Column(TypeName = "varchar(36)")]
-        public Guid AccountNumber { get; set; }
+        public int AccountNumber { get; set; }
 
         [Required]
         [ForeignKey("UserEntity")]
         public Guid UserId { get; set; }
 
-        [Required]
         [Column(TypeName = "decimal(18,2)")]
         public decimal Balance { get; set; }
 

@@ -11,6 +11,7 @@ namespace Application.Mapper
         {
             CreateMap<UserEntity, UserDto>().ReverseMap();
             CreateMap<AccountEntity,AccountDto>().ReverseMap();
+            CreateMap<AccountEntity, Account>().ReverseMap();
             CreateMap<AccountActivityEntity,AccountActivityDto>().ReverseMap();
         }
     }
