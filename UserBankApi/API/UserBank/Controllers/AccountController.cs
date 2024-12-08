@@ -31,10 +31,19 @@ namespace UserBank.Controllers
         public async Task<IActionResult> GetBalance([FromRoute]int accountNumber)
         {
             AccountEntity balance;
-            string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             balance = await _service.GetAccountByAccountNumber(accountNumber, userId);
             return Ok(balance);
         }
 
+        [Authorize]
+        [HttpPatch]
+        [Route("deposit")]
+        public async Task<IActionResult> Deposit([FromBody] DepositDto depositDto)
+        {
+            string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            await _service.UpdateAccount(depositDto);
+            return Ok("transaction completed");
+        }
     }
 }

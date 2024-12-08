@@ -41,9 +41,9 @@ namespace Application.Services
             return account;
         }
 
-        public async Task<AccountEntity> UpdateAccount(int accountNumber)
+        public async Task UpdateAccount(DepositDto depositDto)
         {
-            return null;
+            await _accountRepository.TransferFunds(depositDto.AccountNumber, depositDto.DestinationAccountNumber, depositDto.Amount);
         }
     }
 }

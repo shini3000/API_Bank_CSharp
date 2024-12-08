@@ -7,6 +7,5 @@ namespace Application.Dto
         public Guid AccountId { get; set; }
         public decimal Amount { get; set; }
         public DateTime Timestamp { get; set; }
-        public AccountDto Account { get; set; }
     }
 }

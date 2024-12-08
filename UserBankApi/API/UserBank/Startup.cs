@@ -31,11 +31,8 @@ namespace UserBankApi
 
             var connectionString = Configuration.GetConnectionString("ConnectionServer");
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseMySql(
-                    connectionString,
-                    ServerVersion.AutoDetect(connectionString),
-                    b => b.MigrationsAssembly("UserBank")
-                ));
+            options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)),
+            ServiceLifetime.Singleton);
 
             var jwtSection = Configuration.GetSection("JwtSettings");
             services.Configure<JwtSettings>(jwtSection);
