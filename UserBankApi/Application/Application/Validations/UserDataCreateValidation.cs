@@ -7,10 +7,10 @@ using UserBankApi.Models.Entities;
 
 namespace Application.Validations
 {
-    public class UserDataCreateValidation : IValidationsServices<UserDto, IUserRepository<UserEntity>>
+    public class UserDataCreateValidation : IValidationsServices<UserDto, IUserRepository<UserEntity>,object>
     {
 
-        public void Validate(UserDto userDto, IUserRepository<UserEntity> repository )
+        public void Validate(UserDto userDto, IUserRepository<UserEntity> repository, object value)
         {
             UserExists(userDto.Email, repository);
             UserDataNotEmpty(userDto.Email, userDto.Password, userDto.Name);

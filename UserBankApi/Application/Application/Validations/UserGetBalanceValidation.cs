@@ -1,30 +1,30 @@
 ﻿
 using Application.Exceptions;
 using Application.Validations.Interfaces;
+using UserBankApi.Models.Entities;
 
 namespace Application.Validations
 {
-    public class UserGetBalanceValidation : IValidationsServices<string, string>
+    public class UserGetBalanceValidation : IValidationsServices<AccountEntity, string,object>
     {
-        public void Validate(string email, string emailToken)
+        public void Validate(AccountEntity account, string tokenUserId, object value)
         {
-            UserNotEmpty(email);
-            UserNotOwner(email, emailToken);
-        }
-
-        private void UserNotEmpty(string email)
-        {
-            if (string.IsNullOrWhiteSpace(email))
+            if (!(account == null))
             {
-                throw new UserInvalidException("El campo Email no puede ser nulo o vacio");
+                DataNotEmpty(account.AccountNumber.ToString());
             }
+            else 
+            {
+                throw new NotFoundException("Cuenta no encontrada");
+            }
+            
         }
 
-        private void UserNotOwner(string email, string other)
+        private void DataNotEmpty(string accountNumber)
         {
-            if (email != other)
+            if (accountNumber.Length < 9 || accountNumber.Length >= 10)
             {
-                throw new UnauthorizedException("El usuario no es el propietario");
+                throw new UserInvalidException("El numero de cuenta es invalido");
             }
         }
     }

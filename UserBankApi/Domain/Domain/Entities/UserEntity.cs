@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 using UserBankApi.Interfaces.Entity;
 
 namespace UserBankApi.Models.Entities
@@ -23,6 +24,7 @@ namespace UserBankApi.Models.Entities
         [Column(TypeName = "varchar(255)")]
         public string Password { get; set; }
 
-        public ICollection<AccountEntity> Accounts { get; set; }
+        [JsonIgnore]
+        public List<AccountEntity> Accounts { get; set; }
     }
 }

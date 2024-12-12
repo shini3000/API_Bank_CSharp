@@ -1,7 +1,6 @@
 ﻿using Application.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Text.Json;
 
@@ -42,7 +41,8 @@ namespace Application.Middleware
             {
                 { typeof(UserInvalidException), (HttpStatusCode.BadRequest, "User Validation Error") },
                 { typeof(NotFoundException), (HttpStatusCode.NotFound, "Resource Not Found") },
-                { typeof(UnauthorizedException), (HttpStatusCode.Unauthorized, "Unauthorized Access") }
+                { typeof(UnauthorizedException), (HttpStatusCode.Unauthorized, "Unauthorized Access") },
+                { typeof(InvalidOperationException), (HttpStatusCode.Conflict, "there is a conflict") },
             };
 
             ProblemDetails problemDetails;

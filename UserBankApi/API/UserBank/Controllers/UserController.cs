@@ -36,15 +36,5 @@ namespace UserBankApi.Controllers
             }
             return Ok(response);
         }
-
-
-        [Authorize]
-        [HttpGet("GetBalance/{Email}")]
-        public IActionResult GetBalance([FromRoute]string email)
-        {
-            var userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
-            var balance = _service.GetBalance(email, userEmail).Result;
-            return Ok(balance);
-        }
     }
 }

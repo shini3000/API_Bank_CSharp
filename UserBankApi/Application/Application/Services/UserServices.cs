@@ -14,24 +14,21 @@ namespace UserBankApi.Services
     public class UserServices : IUserServices
     {
         private readonly IUserRepository<UserEntity> _userRepository;
-        private readonly IValidationsServices<UserDto, IUserRepository<UserEntity>> _userDataValidation;
-        private readonly IValidationsServices<LoginDto, object> _userDataLoginValidation;
-        private readonly IValidationsServices<string, string> _userGetBalanceValidation;
+        private readonly IValidationsServices<UserDto, IUserRepository<UserEntity>,object> _userDataValidation;
+        private readonly IValidationsServices<LoginDto, object, object> _userDataLoginValidation;
         private readonly IMapper _mapper;
         private readonly ITokenService _tokenService;
 
         public UserServices(
             IUserRepository<UserEntity> userRepository,
-            IValidationsServices<UserDto, IUserRepository<UserEntity>> userDataValidation,
-            IValidationsServices<LoginDto, object> userDataLoginValidation,
-            IValidationsServices<string, string> userGetBalanceValidation,
+            IValidationsServices<UserDto, IUserRepository<UserEntity>,object> userDataValidation,
+            IValidationsServices<LoginDto, object, object> userDataLoginValidation,
             IMapper mapper,
             ITokenService tokenService)
         {
             _userRepository = userRepository;
             _userDataValidation = userDataValidation;
             _userDataLoginValidation = userDataLoginValidation;
-            _userGetBalanceValidation = userGetBalanceValidation;
             _mapper = mapper;
             _tokenService = tokenService;
         }
@@ -48,7 +45,7 @@ namespace UserBankApi.Services
 
        public async Task<UserEntity> save(UserDto userDto)
         {
-        _userDataValidation.Validate(userDto, _userRepository);
+        _userDataValidation.Validate(userDto, _userRepository, null);
         var userEntity = _mapper.Map<UserEntity>(userDto);
         await _userRepository.SaveAsync(userEntity);
         userEntity.Password = null;
@@ -62,7 +59,7 @@ namespace UserBankApi.Services
 
         public async Task<LoginResponse> VerifyPassword(LoginDto loginDto)
         {
-            _userDataLoginValidation.Validate(loginDto, new object());
+            _userDataLoginValidation.Validate(loginDto, null, null);
             var userEntity = await _userRepository.FindByEmail(loginDto.Email);
             if (userEntity == null || !BCrypt.Net.BCrypt.Verify(loginDto.Password, userEntity.Password))
             {
@@ -82,12 +79,5 @@ namespace UserBankApi.Services
             throw new NotImplementedException();
         }
 
-        public async Task<UserEntity> GetBalance(string email,string emailToken)
-        {
-            _userGetBalanceValidation.Validate(email, emailToken);
-            UserEntity userEntity = await _userRepository.FindByEmail(email);
-            userEntity.Password = null;
-            return userEntity;  
-        }
     }
 }
