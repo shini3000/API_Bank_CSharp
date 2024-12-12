@@ -28,6 +28,12 @@ namespace Infrastructure.Repository
                 .FirstOrDefaultAsync(x => x.AccountNumber == accountNumber);
         }
 
+        public async Task<AccountEntity> GetAccountByAccountId(Guid accountId)
+        {
+            return await _context.Accounts
+                .FirstOrDefaultAsync(x => x.Id == accountId);
+        }
+
         public async Task TransferFunds(int sourceAccountNumber, int destinationAccountNumber, decimal amount)
         {
             await using var transaction = await _context.Database.BeginTransactionAsync();

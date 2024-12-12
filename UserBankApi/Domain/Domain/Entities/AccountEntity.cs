@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 using UserBankApi.Interfaces.Entity;
 
 namespace UserBankApi.Models.Entities
@@ -16,8 +17,10 @@ namespace UserBankApi.Models.Entities
         [Column(TypeName = "decimal(18,2)")]
         public decimal Balance { get; set; }
 
+        [JsonIgnore]
         public UserEntity User { get; set; }
 
+        [JsonIgnore]
         public ICollection<AccountActivityEntity> Activities { get; set; }
     }
 }

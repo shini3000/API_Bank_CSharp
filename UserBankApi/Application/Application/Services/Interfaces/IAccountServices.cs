@@ -9,5 +9,6 @@ namespace Application.Services.Interfaces
         Task<List<AccountEntity>> GetAccountsByUser(int userId);
         Task<AccountEntity> GetAccountByAccountNumber(int accountNumber, string userId);
         Task UpdateAccount(DepositDto depositDto, string tokenUserId);
+        Task<List<AccountActivityEntity>> GetAccountActivityByAccountNumber(int accountNumber, string tokenUserId);
     }
 }

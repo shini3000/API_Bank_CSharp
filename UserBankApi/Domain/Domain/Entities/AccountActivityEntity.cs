@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 using UserBankApi.Interfaces.Entity;
 
 namespace UserBankApi.Models.Entities
@@ -17,6 +18,7 @@ namespace UserBankApi.Models.Entities
         [Required]
         public DateTime Timestamp { get; set; }
 
+        [JsonIgnore]
         public AccountEntity Account { get; set; }
     }
 }

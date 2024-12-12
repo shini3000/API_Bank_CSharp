@@ -45,5 +45,14 @@ namespace UserBank.Controllers
             await _service.UpdateAccount(depositDto, userId);
             return Ok("transaction completed");
         }
+
+        [Authorize]
+        [HttpGet]
+        [Route("GetActivity/{accountNumber}")]
+        public async Task<IActionResult> Withdraw([FromRoute] int accountNumber)
+        {
+            string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            return Ok(await _service.GetAccountActivityByAccountNumber(accountNumber, userId));
+        }
     }
 }

@@ -68,5 +68,13 @@ namespace Application.Services
             var accountActivityEntity = _mapper.Map<AccountActivityEntity>(accountActivityDto);
             await _accountActivityRepository.CreateAccountActivity(accountActivityEntity);
         }
+
+        public async Task<List<AccountActivityEntity>> GetAccountActivityByAccountNumber( int accountNumber,string tokenUserId)
+        {
+            var activities = await _accountActivityRepository.GetAccountActivity(accountNumber);
+            var account = await _accountRepository.GetAccountByAccountId(activities[0].AccountId);
+            _OwnerUserValidate.Validate(tokenUserId, account, null);
+            return activities;
+        }
     }
 }

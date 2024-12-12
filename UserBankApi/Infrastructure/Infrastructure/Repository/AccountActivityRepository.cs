@@ -1,4 +1,5 @@
 ﻿using Infrastructure.Repository.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Principal;
 using UserBankApi.Data;
 using UserBankApi.Models.Entities;
@@ -9,7 +10,7 @@ namespace Infrastructure.Repository
     {
         private readonly ApplicationDbContext _context;
 
-        public AccountActivityRepository(ApplicationDbContext context) 
+        public AccountActivityRepository(ApplicationDbContext context)
         {
             _context = context;
         }
@@ -21,9 +22,11 @@ namespace Infrastructure.Repository
             return accountActivityEntity;
         }
 
-        public Task<AccountActivityEntity> GetAccountActivity(int accountNumber)
+        public async Task<List<AccountActivityEntity>> GetAccountActivity(int accountNumber)
         {
-            throw new NotImplementedException();
+            return await _context.AccountActivities
+                .Where(x => x.Account.AccountNumber == accountNumber)
+                .ToListAsync();
         }
     }
 }
