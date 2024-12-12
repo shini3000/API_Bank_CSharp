@@ -42,7 +42,7 @@ namespace UserBank.Controllers
         public async Task<IActionResult> Deposit([FromBody] DepositDto depositDto)
         {
             string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            await _service.UpdateAccount(depositDto);
+            await _service.UpdateAccount(depositDto, userId);
             return Ok("transaction completed");
         }
     }

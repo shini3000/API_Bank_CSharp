@@ -14,15 +14,15 @@ namespace UserBankApi.Services
     public class UserServices : IUserServices
     {
         private readonly IUserRepository<UserEntity> _userRepository;
-        private readonly IValidationsServices<UserDto, IUserRepository<UserEntity>> _userDataValidation;
-        private readonly IValidationsServices<LoginDto, object> _userDataLoginValidation;
+        private readonly IValidationsServices<UserDto, IUserRepository<UserEntity>,object> _userDataValidation;
+        private readonly IValidationsServices<LoginDto, object, object> _userDataLoginValidation;
         private readonly IMapper _mapper;
         private readonly ITokenService _tokenService;
 
         public UserServices(
             IUserRepository<UserEntity> userRepository,
-            IValidationsServices<UserDto, IUserRepository<UserEntity>> userDataValidation,
-            IValidationsServices<LoginDto, object> userDataLoginValidation,
+            IValidationsServices<UserDto, IUserRepository<UserEntity>,object> userDataValidation,
+            IValidationsServices<LoginDto, object, object> userDataLoginValidation,
             IMapper mapper,
             ITokenService tokenService)
         {
@@ -45,7 +45,7 @@ namespace UserBankApi.Services
 
        public async Task<UserEntity> save(UserDto userDto)
         {
-        _userDataValidation.Validate(userDto, _userRepository);
+        _userDataValidation.Validate(userDto, _userRepository, null);
         var userEntity = _mapper.Map<UserEntity>(userDto);
         await _userRepository.SaveAsync(userEntity);
         userEntity.Password = null;
@@ -59,7 +59,7 @@ namespace UserBankApi.Services
 
         public async Task<LoginResponse> VerifyPassword(LoginDto loginDto)
         {
-            _userDataLoginValidation.Validate(loginDto, new object());
+            _userDataLoginValidation.Validate(loginDto, null, null);
             var userEntity = await _userRepository.FindByEmail(loginDto.Email);
             if (userEntity == null || !BCrypt.Net.BCrypt.Verify(loginDto.Password, userEntity.Password))
             {

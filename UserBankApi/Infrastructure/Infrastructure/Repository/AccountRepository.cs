@@ -1,6 +1,5 @@
 ﻿using Infrastructure.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System.Transactions;
 using UserBankApi.Data;
 using UserBankApi.Models.Entities;
 
@@ -41,8 +40,10 @@ namespace Infrastructure.Repository
                     .AsTracking()
                     .FirstOrDefaultAsync(x => x.AccountNumber == destinationAccountNumber);
 
-                if (sourceAccount == null || destinationAccount == null)
-                    throw new InvalidOperationException("One or both accounts not found");
+                if (sourceAccount == null || destinationAccount == null) 
+                {
+                    throw new InvalidOperationException();
+                }
 
                 sourceAccount.Balance -= amount;
                 destinationAccount.Balance += amount;

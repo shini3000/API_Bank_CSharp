@@ -5,9 +5,9 @@ using System.Text.RegularExpressions;
 
 namespace Application.Validations
 {
-    public class UserDataLoginValidations<T> : IValidationsServices<LoginDto,T>
+    public class UserDataLoginValidations<T> : IValidationsServices<LoginDto,T,T>
     {
-        public void Validate(LoginDto loginDto,T value)
+        public void Validate(LoginDto loginDto,T value,T valueNull)
         {
             UserEmailValidate(loginDto.Email);
             UserPasswordValidate(loginDto.Password);

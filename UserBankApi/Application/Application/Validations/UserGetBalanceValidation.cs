@@ -5,14 +5,13 @@ using UserBankApi.Models.Entities;
 
 namespace Application.Validations
 {
-    public class UserGetBalanceValidation : IValidationsServices<AccountEntity, string>
+    public class UserGetBalanceValidation : IValidationsServices<AccountEntity, string,object>
     {
-        public void Validate(AccountEntity account, string tokenUserId)
+        public void Validate(AccountEntity account, string tokenUserId, object value)
         {
             if (!(account == null))
             {
                 DataNotEmpty(account.AccountNumber.ToString());
-                UserNotOwner(account.UserId.ToString(), tokenUserId);
             }
             else 
             {
@@ -26,14 +25,6 @@ namespace Application.Validations
             if (accountNumber.Length < 9 || accountNumber.Length >= 10)
             {
                 throw new UserInvalidException("El numero de cuenta es invalido");
-            }
-        }
-
-        private void UserNotOwner(string Id, string TokenId)
-        {
-            if (Id != TokenId)
-            {
-                throw new UnauthorizedException("El usuario no es el propietario");
             }
         }
     }

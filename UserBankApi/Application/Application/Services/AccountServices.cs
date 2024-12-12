@@ -12,14 +12,20 @@ namespace Application.Services
     {
         private readonly IMapper _mapper;
         private readonly IAccountRepository<AccountEntity> _accountRepository;
-        private readonly IValidationsServices<AccountEntity, string> _getBalanceValidation;
+        private readonly IValidationsServices<AccountEntity, string,object> _getBalanceValidation;
+        private readonly IValidationsServices<AccountEntity, AccountEntity,decimal>  _trasactionValidation;
+        private readonly IValidationsServices<string, AccountEntity, object> _OwnerUserValidate;
 
         public AccountServices(IMapper mapper, IAccountRepository<AccountEntity> accountRepository,
-            IValidationsServices<AccountEntity, string> getBalanceValidation)
+            IValidationsServices<AccountEntity, string, object> getBalanceValidation,
+            IValidationsServices<AccountEntity,AccountEntity,decimal> trasactionValidation,
+            IValidationsServices<string,AccountEntity,object> OwnerUserValidate)
         {
             _mapper = mapper;
             _accountRepository = accountRepository;
             _getBalanceValidation = getBalanceValidation;
+            _trasactionValidation = trasactionValidation;
+            _OwnerUserValidate = OwnerUserValidate;
         }
 
         public async Task<AccountEntity> CreateAccount(Account account)
@@ -37,13 +43,18 @@ namespace Application.Services
         public async Task<AccountEntity> GetAccountByAccountNumber(int accountNumber,string tokenUserId)
         {
             var account = await _accountRepository.GetAccountByAccountNumber(accountNumber);
-            _getBalanceValidation.Validate(account, tokenUserId);
+            _getBalanceValidation.Validate(account, tokenUserId, null);
+            _OwnerUserValidate.Validate(tokenUserId, account, null);
             return account;
         }
 
-        public async Task UpdateAccount(DepositDto depositDto)
+        public async Task UpdateAccount(DepositDto depositDto, string tokenUserId)
         {
-            await _accountRepository.TransferFunds(depositDto.AccountNumber, depositDto.DestinationAccountNumber, depositDto.Amount);
+            var account = await _accountRepository.GetAccountByAccountNumber(depositDto.AccountNumber);
+            var accountDestination = await _accountRepository.GetAccountByAccountNumber(depositDto.DestinationAccountNumber);
+            _trasactionValidation.Validate(account, accountDestination, depositDto.Amount);
+            _OwnerUserValidate.Validate(tokenUserId , account, null);
+            await _accountRepository.TransferFunds(depositDto.AccountNumber, depositDto.DestinationAccountNumber, depositDto.Amount); 
         }
     }
 }

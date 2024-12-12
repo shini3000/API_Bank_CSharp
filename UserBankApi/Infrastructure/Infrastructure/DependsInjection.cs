@@ -11,6 +11,7 @@ namespace Infrastructure
         {
             services.AddScoped<IUserRepository<UserEntity>, UserRepository>();
             services.AddScoped<IAccountRepository<AccountEntity>, AccountRepository>();
+            services.AddScoped<IAccountActivityRepository<AccountActivityEntity>, AccountActivityRepository>();
         }
     }
 }
